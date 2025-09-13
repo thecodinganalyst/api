@@ -16,7 +16,8 @@ ENV JAVA_OPTS="-XX:MaxRAMPercentage=75 -XX:InitialRAMPercentage=50 -XX:+UseConta
 RUN chmod g+rwx /app && chgrp -R 0 /app
 
 EXPOSE 8080
+EXPOSE 8081
 # If you use Spring Boot Actuator, you can later add a HEALTHCHECK to /actuator/health
-# HEALTHCHECK --interval=30s --timeout=5s --start-period=30s CMD wget -qO- http://127.0.0.1:8080/actuator/health | grep -q '"status":"UP"' || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s CMD wget -qO- http://127.0.0.1:8081/actuator/health | grep -q '"status":"UP"' || exit 1
 
 ENTRYPOINT ["sh","-c","exec java $JAVA_OPTS -jar /app/app.jar"]
