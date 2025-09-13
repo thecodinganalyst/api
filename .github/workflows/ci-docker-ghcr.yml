@@ -86,6 +86,13 @@ jobs:
       - name: Build bootJar (for Dockerfile Option A)
         run: ./gradlew clean bootJar
 
+      - name: Show JAR(s)
+        run: ls -l build/libs/
+
+      - name: Determine JAR path
+        id: jar
+        run: echo "jar=$(ls -1 build/libs/*.jar | head -n1)" >> "$GITHUB_OUTPUT"
+
       - name: Install cosign
         if: github.event_name != 'pull_request'
         uses: sigstore/cosign-installer@v3.5.0

@@ -1,6 +1,10 @@
 .git
 .gradle
-build
+# build is excluded...
+build/
+# ...but re-include only the libs dir and its contents
+!build/libs/
+!build/libs/**
 out
 **/*.iml
 .idea
