@@ -36,15 +36,11 @@ jobs:
           java-version: '21'
           cache: gradle
 
-      - name: Build & Test (enforces JaCoCo ≥ 90%)
+      - name: Setup Gradle (caching only)
         uses: gradle/actions/setup-gradle@v4
-        with:
-          arguments: |
-            clean
-            test
-            jacocoTestReport
-            jacocoTestCoverageVerification
-            check
+
+      - name: Build & Test (enforces JaCoCo ≥ 90%)
+        run: ./gradlew clean test jacocoTestReport jacocoTestCoverageVerification check
 
       - name: Upload JUnit test results (XML + HTML)
         if: always()
