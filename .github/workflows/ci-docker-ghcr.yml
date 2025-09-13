@@ -118,6 +118,7 @@ jobs:
           # Optional: tweak tag strategy. Defaults cover refs/heads & tags.
           # Example to ensure 'latest' on main:
           tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
             type=ref,event=branch,branch=main,enable=true
             type=sha,enable=true
             type=semver,pattern={{version}}
