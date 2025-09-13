@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.5'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
 }
 
 group = 'com.hevlar'
@@ -39,4 +40,55 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	finalizedBy 'jacocoTestReport' // generate report after tests
+}
+
+jacoco {
+	toolVersion = '0.8.12'
+}
+
+def coverageExcludes = ['**/ApiApplication.class'] // add more if you want
+
+tasks.jacocoTestReport {
+	dependsOn tasks.test
+	reports {
+		xml.required.set(true)
+		html.required.set(true)
+	}
+	// exclude classes from report
+	classDirectories.setFrom(
+			files(sourceSets.main.output.classesDirs).asFileTree.matching {
+				exclude coverageExcludes
+			}
+	)
+}
+
+tasks.jacocoTestCoverageVerification {
+	dependsOn tasks.test
+	classDirectories.setFrom(
+			files(sourceSets.main.output.classesDirs).asFileTree.matching {
+				exclude coverageExcludes
+			}
+	)
+	violationRules {
+		rule {
+			limit {
+				counter = 'LINE'
+				value = 'COVEREDRATIO'
+				minimum = 0.90
+			}
+		}
+		rule {
+			limit {
+				counter = 'BRANCH'
+				value = 'COVEREDRATIO'
+				minimum = 0.90
+			}
+		}
+	}
+}
+
+// make "gradle check" fail if coverage is below thresholds
+tasks.named('check') {
+	dependsOn 'jacocoTestCoverageVerification'
 }
