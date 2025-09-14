@@ -15,7 +15,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,prometheus
+        include: health,info,prometheus,loggers
   endpoint:
     health:
       show-details: when_authorized          # or 'when_authorized' if using Security
