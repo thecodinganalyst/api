@@ -91,7 +91,15 @@ jobs:
 
       - name: Determine JAR path
         id: jar
-        run: echo "jar=$(ls -1 build/libs/*.jar | head -n1)" >> "$GITHUB_OUTPUT"
+        run: |
+          set -euo pipefail
+          JAR=$(ls -1 build/libs/*.jar | grep -v 'plain' | head -n1 || true)
+          if [[ -z "${JAR:-}" ]]; then
+            echo "No boot jar found in build/libs (did bootJar run?)" >&2
+            exit 1
+          fi
+          echo "jar=$JAR" >> "$GITHUB_OUTPUT"
+          echo "Selected boot jar: $JAR"
 
       - name: Install cosign
         if: github.event_name != 'pull_request'
@@ -133,9 +141,8 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          # Pass the jar path if using Dockerfile Option A:
           build-args: |
-            JAR_FILE=build/libs/*.jar
+            JAR_FILE=${{ steps.jar.outputs.jar }}
 
       - name: Sign the published image (cosign)
         if: github.event_name != 'pull_request'
