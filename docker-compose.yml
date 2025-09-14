@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  api:
+    image: ghcr.io/thecodinganalyst/api:latest
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
